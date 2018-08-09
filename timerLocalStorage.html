@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Clock</title>
+</head>
+<body>
+
+<span id="clock"></span>
+
+<script type="text/javascript">
+
+var local = localStorage.getItem('timer');
+console.log(local);
+
+if (!local) {
+      var t = new myTimer(0, 0, 10);   //создаем таймер класса myTimer
+    localStorage.setItem('timer', JSON.stringify(t));
+}
+
+else {
+    local = JSON.parse(local);
+    console.log(local);
+    var t = new myTimer(local.hours, local.minutes, local.seconds);
+}
+
+//функция конструктор класса таймера
+function myTimer(hours, minutes, seconds) { 
+    var self = this;
+
+//Свойства класса-----------------------------------------------
+    self.hours = hours;
+    self.minutes = minutes;
+    self.seconds = seconds;
+
+//Методы класса---------------------------------------------
+    
+    self.showTime = function () {  //запись времени  браузер с добавлением 0, в случае если время < 10
+        document.getElementById('clock').innerHTML='Осталось времени - '+ strTime(self.hours, 2) + ':' + strTime(self.minutes, 2) + ':' + strTime(self.seconds, 2);
+       
+       tickTimer = setTimeout(updateTime,1000); 
+    }
+
+    updateTime();
+    
+    function updateTime() { // функция обновления времени на таймере
+        self.showTime();
+        if ( self.seconds == 0 ) {
+            if ( self.minutes == 0 ) {
+                if ( self.hours == 0 ) {
+                    alert( 'Время вышло!' );
+                    clearTimeout(tickTimer);
+                    return;
+                }
+                self.hours--;
+                self.minutes = 60;
+            }  
+            self.minutes--;
+            self.seconds = 59;
+        }
+        else {
+        self.seconds--;
+        }
+        localStorage.setItem('timer', JSON.stringify(self)) ;
+    }   
+   
+    function strTime(val,len) {  //Дополняем строку нулями слева
+        var strVal=val.toString();
+        while ( strVal.length < len )
+            strVal='0'+strVal;
+        return strVal;
+   }
+}
+
+</script>
+</body>
+</html> 
